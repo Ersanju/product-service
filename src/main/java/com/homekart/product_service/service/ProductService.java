@@ -1,8 +1,10 @@
 package com.homekart.product_service.service;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.homekart.product_service.model.Product;
 import com.homekart.product_service.repository.ProductRepository;
@@ -15,9 +17,14 @@ public class ProductService {
 
     public final ProductRepository productRepository;
 
-    public String createProduct(Product product) {
+    public final S3Service s3Service;
+
+    public String createProduct(Product product, MultipartFile image) throws IOException {
+
+        String imgUrl = s3Service.uploadFile(image);
 
         product.setProductId(UUID.randomUUID().toString());
+        product.setImageUrl(imgUrl);
 
         return productRepository.saveProduct(product);
     }
