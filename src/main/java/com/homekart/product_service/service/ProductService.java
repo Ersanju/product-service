@@ -6,12 +6,15 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.homekart.product_service.exception.ProductNotFoundException;
 import com.homekart.product_service.model.Product;
 import com.homekart.product_service.repository.ProductRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ProductService {
 
@@ -21,6 +24,7 @@ public class ProductService {
 
     public String createProduct(Product product, MultipartFile image) throws IOException {
 
+        log.info("Creating product: {}", product.getName());
         String imgUrl = s3Service.uploadFile(image);
 
         product.setProductId(UUID.randomUUID().toString());
@@ -31,14 +35,12 @@ public class ProductService {
 
     public Product getProduct(String productId) {
 
-        if (productId == null || productId.isBlank()) {
-            throw new RuntimeException("Product ID is required");
-        }
+        log.info("Fetching product with Id: {}", productId);
 
         Product product = productRepository.getProductById(productId);
 
         if (product == null) {
-            throw new RuntimeException(
+            throw new ProductNotFoundException(
                     "Product not found with ID: " + productId);
         }
 

@@ -1,4 +1,4 @@
-package com.homekart.dto;
+package com.homekart.product_service.dto;
 
 import java.math.BigDecimal;
 
